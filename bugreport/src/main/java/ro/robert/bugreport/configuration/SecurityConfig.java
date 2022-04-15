@@ -3,49 +3,65 @@ package ro.robert.bugreport.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static ro.robert.bugreport.configuration.ApplicationUserPermission.PROGRAMMER_VIEW_LIST;
-import static ro.robert.bugreport.configuration.ApplicationUserPermission.TESTER_VIEW_LIST;
 import static ro.robert.bugreport.configuration.Role.*;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
+
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Autowired
     public SecurityConfig(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/login");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/api/v1/homepage/tester/**").hasAnyRole(ADMIN.name(), TESTER.name())
-                .antMatchers(HttpMethod.GET, "/api/v1/homepage/tester").hasAuthority(TESTER_VIEW_LIST.getPermission())
-                .antMatchers("/api/v1/homepage/programmer/**").hasAnyRole(ADMIN.name(), PROGRAMMER.name())
-                .antMatchers(HttpMethod.GET, "/api/v1/homepage/programmer").hasAuthority(PROGRAMMER_VIEW_LIST.getPermission())
-                .anyRequest()
-                .authenticated()
+                .cors()
                 .and()
-                .httpBasic();
+//                .authorizeRequests()
+//                .antMatchers("/login*").permitAll();
+//
+                .authorizeRequests()
+                .anyRequest().permitAll();
+
+//        .and()
+//                .authorizeRequests()
+//                .antMatchers("/login", "/logout").permitAll()
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/api/v1/homepage/tester/**").hasAnyRole(ADMIN.name(), TESTER.name())
+//                .antMatchers(HttpMethod.GET, "/api/v1/homepage/tester").hasAuthority(TESTER_VIEW_LIST.getPermission())
+//                .antMatchers("/api/v1/homepage/programmer/**").hasAnyRole(ADMIN.name(), PROGRAMMER.name())
+//                .antMatchers(HttpMethod.GET, "/api/v1/homepage/programmer").hasAuthority(PROGRAMMER_VIEW_LIST.getPermission())
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .httpBasic();
     }
 
     @Override

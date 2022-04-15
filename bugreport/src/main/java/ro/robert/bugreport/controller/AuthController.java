@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ro.robert.bugreport.dbo.AuthResponse;
 import ro.robert.bugreport.dbo.LoginRequest;
 import ro.robert.bugreport.dbo.RegisterRequest;
 import ro.robert.bugreport.service.UserService;
@@ -24,9 +25,8 @@ public class AuthController {
         return new ResponseEntity<>("All gud", HttpStatus.OK);
     }
 
-    @GetMapping(path = "/login")
-    public void login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Sa moara franta ca am putut sa trimit ceva");
-        //return userService.login(loginRequest);
+    @PostMapping(path = "/login")
+    public AuthResponse login(@RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest);
     }
 }
