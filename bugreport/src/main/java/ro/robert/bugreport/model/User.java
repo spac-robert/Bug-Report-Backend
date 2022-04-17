@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "user", schema = "public")
 public class User {
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "username", nullable = false)
@@ -28,4 +28,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public User(String username, String email, String password, Role role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 }

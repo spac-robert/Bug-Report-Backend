@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import ro.robert.bugreport.dbo.AuthResponse;
 import ro.robert.bugreport.dbo.LoginRequest;
 import ro.robert.bugreport.dbo.RegisterRequest;
+import ro.robert.bugreport.dbo.RegisterResponse;
 import ro.robert.bugreport.model.User;
 import ro.robert.bugreport.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,10 +27,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
 
-    public void signup(RegisterRequest registerRequest) throws Exception {
-        User user = userRepository.findUsersByEmail(registerRequest.getEmail())
-                .orElseThrow(() -> new Exception("Nu se poate"));
-        userRepository.save(user);
+    public RegisterResponse signup(RegisterRequest registerRequest) {
+        if (!registerRequest.getAuthToken().isBlank() || !registerRequest.getAuthToken().isEmpty()) {
+            Optional<User> user = userRepository.findUsersByEmail(registerRequest.getEmail());
+            if (user.isEmpty()) {
+                User newUser = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword(), registerRequest.getRole());
+                userRepository.save(newUser);
+                return new RegisterResponse("Tuto bene", true);
+            }
+        }
+        return new RegisterResponse("Not bueno my friend", false);
     }
 
     public AuthResponse login(LoginRequest loginRequest) {
