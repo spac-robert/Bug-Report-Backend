@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/login","/register");
+        web.ignoring().antMatchers("/login", "/register","/api/**");
     }
 
     @Override
@@ -47,8 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/logout", "/register","/api/**").permitAll()
-                .and()
+                .antMatchers("/login", "/logout", "/register", "/api/**").permitAll();
 //                .authorizeRequests()
 ////                .antMatchers("/register").hasAnyRole(ADMIN.name())
 //                //.antMatchers("/api/v1/homepage/tester/**").hasAnyRole(ADMIN.name(), TESTER.name())
@@ -58,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .anyRequest()
 //                .authenticated()
 //                .and()
-                .httpBasic();
+//                .httpBasic();
 
     }
 

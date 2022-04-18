@@ -15,4 +15,8 @@ public class TesterService {
     public List<Bug> getBugs() {
         return bugRepository.findAll();
     }
+
+    public Bug addBug(Bug bug) {
+        return bugRepository.save(bug);
+    }
 }
